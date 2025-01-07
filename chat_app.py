@@ -26,11 +26,11 @@ if prompt := st.chat_input("You:"):
 
     # Prepare payload for API request
     payload = {
-        "model": "llama3.2:latest",
-        #"model": "oagmodel",
-        #"files": [
-        #    {"type": "collection", "id": "4f0d35f4-9191-4366-afd9-0cc303e4d47a"}
-        #],
+        #"model": "llama3.2:latest",
+        "model": "oagmodel",
+        "files": [
+            {"type": "collection", "id": "703f6075-9ca7-409c-9828-0897dd8a5467"}
+        ],
         "messages": st.session_state.messages
     }
     headers = {
