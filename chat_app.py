@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 
 # Open WebUI API configuration
-API_URL = "http://samaritanshomehealth.com:8090/api/chat/completions"
-API_KEY = "sk-4f53a3e73b734f699fd66c357ec2392c"
+API_URL = "http://77.93.154.36:8080/api/chat/completions"
+API_KEY = "sk-f43d3c66e88943c6bac4816464c22fb2"
 
 # Initialize chat history in session state
 if "messages" not in st.session_state:
