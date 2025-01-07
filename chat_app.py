@@ -3,7 +3,7 @@ import requests
 
 # Open WebUI API configuration
 API_URL = "http://77.93.154.36:8080/api/chat/completions"
-API_KEY = "sk-f43d3c66e88943c6bac4816464c22fb2"
+API_KEY = "sk-8231b72c44d943608ad23784e3f4a095"
 
 # Initialize chat history in session state
 if "messages" not in st.session_state:
@@ -53,7 +53,7 @@ if authenticate_user():
             #"model": "llama3.2:latest",
             "model": "oagmodel",
             "files": [
-                {"type": "collection", "id": "74a7f73f-f3c1-4ddc-8755-681eca57ee72"}
+                {"type": "collection", "id": "24b053ce-8a51-4c89-b04f-d188f532e11f"}
             ],
             "messages": st.session_state.messages
         }
