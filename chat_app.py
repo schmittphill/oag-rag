@@ -53,7 +53,7 @@ if authenticate_user():
             #"model": "llama3.2:latest",
             "model": "oagmodel",
             "files": [
-                {"type": "collection", "id": "24b053ce-8a51-4c89-b04f-d188f532e11f"}
+                {"type": "collection", "id": "0cd1539c-5b89-489c-8d87-5cd1f3288570"}
             ],
             "messages": st.session_state.messages
         }
