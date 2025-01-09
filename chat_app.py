@@ -6,10 +6,6 @@ import uuid
 import sys
 import json
 import readline  # For better input handling
-from rich import print as rprint
-from rich.console import Console
-from rich.prompt import Prompt
-from rich.progress import Progress
 
 # ANSI escape codes for text colors
 BLUE = "\033[1;34m"
@@ -55,26 +51,6 @@ def authenticate_user():
 def print_highlight(message, color=BLUE):
     print(f"\n{color}{message}{RESET}")
 
-def process_stream_response(response):
-    #full_response = ""
-    for line in response.iter_lines():
-        if line:
-            try:
-                json_response = json.loads(line.decode('utf-8').split('data: ')[1])
-                if 'choices' in json_response and json_response['choices']:
-                    content = json_response['choices'][0].get('delta', {}).get('content', '')
-                    if content:
-                        print(f"{BLUE}{content}{RESET}", end='', flush=True)
-                        full_response += content
-                elif 'usage' in json_response:
-                    print(f"\n\n{GREEN}Usage: {json_response['usage']}{RESET}")
-            except json.JSONDecodeError:
-                if b'data: [DONE]' in line:
-                    continue  # Skip the [DONE] message
-                print(f"{RED}Error decoding JSON: {line}{RESET}")
-    print()  # Add a newline at the end
-    return full_response
-
 if authenticate_user():
     st.text("How can I assist you today?")
 
@@ -92,7 +68,7 @@ if authenticate_user():
 
         # Prepare payload for API request
         payload = {
-            #"model": "llama3.2:latest",
+            "stream": True,
             "model": "oagmodel",
             "stream_options": {"include_usage": True},
             #"files": [
@@ -105,48 +81,9 @@ if authenticate_user():
             "Content-Type": "application/json"
         }
 
-        # Send request to Open WebUI API
-        response = requests.post(API_URL, json=payload, headers=headers)
-
-
-        if response.status_code == 200:
-            # Extract assistant's reply
-            assistant_reply = response.json()["choices"][0]["message"]["content"]
-            # Add assistant's reply to chat history
-            st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
-            with st.chat_message("assistant"):
-                st.markdown(assistant_reply)
-        else:
-            st.error(f"Error {response.status_code}: {response.text}")
-
-        
-
-    def defunc_code():
-
-        for line in chat_reponse.iter_lines():
-            if line:
-                print(line)
-
-        # Send request to Open WebUI API
-        response = requests.post(API_URL, json=payload, headers=headers)
-
-
-        if response.status_code == 200:
-            # Extract assistant's reply
-            assistant_reply = response.json()["choices"][0]["message"]["content"]
-            # Add assistant's reply to chat history
-            st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
-            with st.chat_message("assistant"):
-                st.markdown(assistant_reply)
-        else:
-            st.error(f"Error {response.status_code}: {response.text}")
-
         try:
             RESPONSE = ""
             with requests.post(API_URL, json=payload, headers=headers, stream=True) as chat_response:
-                chat_response.raise_for_status()
-                ##ai_response = process_stream_response(chat_response)
-                #messages.append({"role": "assistant", "content": ai_response})
 
                 for line in chat_response.iter_lines():
                     if line:
@@ -155,10 +92,10 @@ if authenticate_user():
                             if 'choices' in json_response and json_response['choices']:
                                 content = json_response['choices'][0].get('delta', {}).get('content', '')
                                 if content:
-                                    print(f"{BLUE}{content}{RESET}", end='', flush=True)
                                     RESPONSE += content
                             elif 'usage' in json_response:
                                 print(f"\n\n{GREEN}Usage: {json_response['usage']}{RESET}")
+
                         except json.JSONDecodeError:
                             if b'data: [DONE]' in line:
                                 continue  # Skip the [DONE] message
@@ -170,3 +107,20 @@ if authenticate_user():
 
         except requests.RequestException as e:
             print_highlight(f"Error: {e}", RED)
+
+        
+
+    def defunc_code():
+
+        # Send request to Open WebUI API
+        response = requests.post(API_URL, json=payload, headers=headers)
+
+        if response.status_code == 200:
+            # Extract assistant's reply
+            assistant_reply = response.json()["choices"][0]["message"]["content"]
+            # Add assistant's reply to chat history
+            st.session_state.messages.append({"role": "assistant", "content": assistant_reply})
+            with st.chat_message("assistant"):
+                st.markdown(assistant_reply)
+        else:
+            st.error(f"Error {response.status_code}: {response.text}")
